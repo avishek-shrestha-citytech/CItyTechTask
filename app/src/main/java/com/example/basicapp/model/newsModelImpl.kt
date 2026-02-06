@@ -7,16 +7,16 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class newsModelImpl {
-    private fun fetchNews() {
+class NewsModelImpl {
+    fun fetchNews() {
         val apiService = RetrofitClient.instance
 
         apiService.getTopHeadlines("technology", apiKeys.GNEWS_API_KEY)
             .enqueue(object : Callback<NewsApiResponse> {
                 override fun onResponse(call: Call<NewsApiResponse>, response: Response<NewsApiResponse>) {
                     if (response.isSuccessful) {
-                        val newsList = response.body()?.articles // Accessing your data class fields
-                        // UPDATE UI: newsAdapter.submitList(newsList)
+                        val newsList = response.body()?.articles
+
                     }
                 }
 

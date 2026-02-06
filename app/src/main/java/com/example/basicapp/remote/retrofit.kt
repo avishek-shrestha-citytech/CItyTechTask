@@ -1,7 +1,6 @@
 package com.example.basicapp.remote
 
 import com.example.basicapp.model.NewsApiResponse
-import com.example.basicapp.model.newsModelImpl
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
