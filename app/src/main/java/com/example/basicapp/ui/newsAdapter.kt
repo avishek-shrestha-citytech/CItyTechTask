@@ -44,10 +44,10 @@ class NewsAdapter(private var articles: List<Article>) :
 
     override fun getItemCount(): Int = articles.size
 
-    // Helper to update data when API returns results
+    // Helper fn
     @SuppressLint("NotifyDataSetChanged")
     fun updateData(newArticles: List<Article>) {
         this.articles = newArticles
-        notifyDataSetChanged() // Tells the list to refresh
+        notifyDataSetChanged() //Refresh List
     }
 }

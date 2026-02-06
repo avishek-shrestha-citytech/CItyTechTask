@@ -8,9 +8,11 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.basicapp.model.NewsModelImpl
+import com.example.basicapp.model.NewsCallback
+import com.example.basicapp.model.Article
 import com.example.basicapp.ui.NewsAdapter
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), NewsCallback {
     private lateinit var recyclerView: RecyclerView
     private lateinit var newsAdapter: NewsAdapter
     private val newsModel = NewsModelImpl()
@@ -26,12 +28,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         recyclerView = findViewById(R.id.newsRecycler)
-
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        //Empty List Initialization
         newsAdapter = NewsAdapter(emptyList())
         recyclerView.adapter = newsAdapter
-        newsModel.fetchNews()
+
+        newsModel.fetchNews(this)
+    }
+
+    override fun onNewsLoaded(articles: List<Article>) {
+        newsAdapter.updateData(articles)
+    }
+
+    override fun onError(error: String) {
+        android.util.Log.e("NEWS_ERROR", error)
     }
 }

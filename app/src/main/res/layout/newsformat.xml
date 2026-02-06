@@ -19,6 +19,7 @@
             android:id="@+id/newsImage"
             android:layout_width="90dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_weight="1"
             tools:srcCompat="@tools:sample/avatars" />
 
@@ -36,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:text="Item Title"
                 android:textSize="18sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/secText"
