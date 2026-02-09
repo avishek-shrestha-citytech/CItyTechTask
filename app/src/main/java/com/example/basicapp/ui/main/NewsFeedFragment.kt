@@ -91,7 +91,7 @@ class NewsFeedFragment : Fragment(), NewsCallback {
         )
 
         parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, detailFragment)
+            .add(R.id.fragment_container, detailFragment)
             .addToBackStack(null)
             .commit()
     }

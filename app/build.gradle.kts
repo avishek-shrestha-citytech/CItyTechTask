@@ -57,7 +57,7 @@ dependencies {
     //Logging Interceptor (helps you see the API calls in Logcat)
     implementation(libs.logging.interceptor)
 
-    // Coil for Jetpack Compose
+    // Coil
     implementation(libs.coil.compose)
 
     // Recommended: Add the Network (OkHttp) fetcher for API images

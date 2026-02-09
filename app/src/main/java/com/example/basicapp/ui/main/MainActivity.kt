@@ -149,6 +149,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+    private fun loadFragment(fragment: Fragment, tag: String) {
+        val currentFragment = supportFragmentManager.findFragmentByTag(currentFragmentTag)
+
+        supportFragmentManager.beginTransaction().apply {
+            if (currentFragment != null) {
+                hide(currentFragment)
+            }
+
+            val existingFragment = supportFragmentManager.findFragmentByTag(tag)
+            if (existingFragment != null) {
+                show(existingFragment)
+            } else {
+                add(R.id.fragment_container, fragment, tag)
+            }.commit()
+        }
+    }
+
     private fun navigateTo(tag: String) {
         if (currentFragmentTag == tag) {
             if (tag == TAG_NEWS_FEED) {
@@ -157,39 +175,14 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-
-        val fragment: Fragment
-        val title: String
-        val menuItemId: Int
-
-        when (tag) {
-            TAG_NEWS_FEED -> {
-                fragment = NewsFeedFragment()
-                title = "News Feed"
-                menuItemId = R.id.newsFeed
-            }
-            TAG_SETTINGS -> {
-                fragment = SettingsFragment()
-                title = "Settings"
-                menuItemId = R.id.settings
-            }
+        val fragment = when (tag) {
+            TAG_NEWS_FEED -> NewsFeedFragment()
+            TAG_SETTINGS -> SettingsFragment()
             else -> return
         }
 
         loadFragment(fragment, tag)
         currentFragmentTag = tag
-        titleTextView.text = title
-
-        if (bottomNav.selectedItemId != menuItemId) {
-            bottomNav.selectedItemId = menuItemId
-        }
-        navView.setCheckedItem(menuItemId)
-    }
-
-    private fun loadFragment(fragment: Fragment, tag: String) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment, tag)
-            .commit()
+        titleTextView.text = if (tag == TAG_NEWS_FEED) "News Feed" else "Settings"
     }
 }
