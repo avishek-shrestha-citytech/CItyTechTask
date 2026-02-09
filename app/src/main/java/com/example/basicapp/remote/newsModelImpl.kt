@@ -1,9 +1,9 @@
-package com.example.basicapp.model
+package com.example.basicapp.remote
 
 import android.util.Log
 import com.example.basicapp.data.apiKeys
-import com.example.basicapp.remote.RetrofitClient
 import com.example.basicapp.model.Article
+import com.example.basicapp.model.NewsApiResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

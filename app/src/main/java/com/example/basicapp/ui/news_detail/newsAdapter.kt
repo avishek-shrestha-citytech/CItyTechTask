@@ -1,4 +1,4 @@
-package com.example.basicapp.ui
+package com.example.basicapp.ui.news_detail
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -13,8 +13,10 @@ import coil3.request.placeholder
 import com.example.basicapp.R
 import com.example.basicapp.model.Article
 
-class NewsAdapter(private var articles: List<Article>) :
-    RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
+class NewsAdapter(
+    private var articles: List<Article>,
+    private val onArticleClick: ((Article) -> Unit)? = null
+) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
 
     class NewsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val title: TextView = view.findViewById(R.id.mainText)
@@ -39,6 +41,11 @@ class NewsAdapter(private var articles: List<Article>) :
         holder.image.load(article.image) {
             crossfade(true)
             placeholder(R.drawable.ic_launcher_background)
+        }
+
+        // Click listener
+        holder.itemView.setOnClickListener {
+            onArticleClick?.invoke(article)
         }
     }
 
