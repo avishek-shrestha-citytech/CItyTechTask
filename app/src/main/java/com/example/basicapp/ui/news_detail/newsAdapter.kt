@@ -2,6 +2,7 @@ package com.example.basicapp.ui.news_detail
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
@@ -16,6 +17,8 @@ class NewsAdapter(
     private val onArticleClick: ((Article) -> Unit)? = null
 ) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
 
+    private val expandedPositions = mutableSetOf<Int>()
+
     class NewsViewHolder(val binding: NewsformatBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
@@ -27,12 +30,18 @@ class NewsAdapter(
         return NewsViewHolder(binding)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
         val article = articles[position]
+        val isExpanded = expandedPositions.contains(position)
 
-        // Text
         holder.binding.mainText.text = article.title
-        holder.binding.secText.text = article.description
+        holder.binding.fullDescription.text = article.description ?: "No description available"
+
+        holder.binding.expandedSection.visibility = if (isExpanded) View.VISIBLE else View.GONE
+        holder.binding.expandButton.setImageResource(
+            if (isExpanded) R.drawable.ic_expand_less else R.drawable.ic_expand_more
+        )
 
         // Image with Coil
         holder.binding.newsImage.load(article.image) {
@@ -40,7 +49,17 @@ class NewsAdapter(
             placeholder(R.drawable.ic_launcher_background)
         }
 
-        // Click listener
+        // Expand Button Listener
+        holder.binding.expandButton.setOnClickListener {
+            if (isExpanded) {
+                expandedPositions.remove(position)
+            } else {
+                expandedPositions.add(position)
+            }
+            notifyItemChanged(position)
+        }
+
+        // Click listener for details page
         holder.itemView.setOnClickListener {
             onArticleClick?.invoke(article)
         }

@@ -21,6 +21,7 @@ class NewsModelImpl {
             .enqueue(object : Callback<NewsApiResponse> {
                 override fun onResponse(call: Call<NewsApiResponse>, response: Response<NewsApiResponse>) {
                     if (response.isSuccessful) {
+                        Log.e("API_CALL_SUCCESSFUL","Api Call Successful")
                         val newsList = response.body()?.articles ?: emptyList()
                         callback.onNewsLoaded(newsList)
                     } else {
