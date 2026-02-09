@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.basicapp.R
+import com.example.basicapp.databinding.FragmentNewsFeedBinding
 import com.example.basicapp.model.Article
 import com.example.basicapp.ui.news_detail.NewsAdapter
 import com.example.basicapp.remote.NewsCallback
@@ -23,25 +24,35 @@ class NewsFeedFragment : Fragment(), NewsCallback {
     private lateinit var newsAdapter: NewsAdapter
     private val newsModel = NewsModelImpl()
 
+    //View Binding Initialization
+    private var _binding: FragmentNewsFeedBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_news_feed, container, false)
+    ): View {
+        _binding = FragmentNewsFeedBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        recyclerView = view.findViewById(R.id.newsRecycler)
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.newsRecycler.layoutManager = LinearLayoutManager(requireContext())
+
         newsAdapter = NewsAdapter(emptyList()) { article ->
             openArticleDetail(article)
         }
-        recyclerView.adapter = newsAdapter
+        binding.newsRecycler.adapter = newsAdapter
 
-        recyclerView.addOnChildAttachStateChangeListener(object : RecyclerView.OnChildAttachStateChangeListener {
+        binding.newsRecycler.addOnChildAttachStateChangeListener(object : RecyclerView.OnChildAttachStateChangeListener {
             override fun onChildViewAttachedToWindow(view: View) {
                 view.isFocusable = true
                 view.isFocusableInTouchMode = true
@@ -51,15 +62,15 @@ class NewsFeedFragment : Fragment(), NewsCallback {
 
         val detector = GestureDetector(requireContext(), object : GestureDetector.SimpleOnGestureListener() {
             override fun onSingleTapUp(e: MotionEvent): Boolean {
-                recyclerView.findChildViewUnder(e.x, e.y)?.requestFocus()
+                binding.newsRecycler.findChildViewUnder(e.x, e.y)?.requestFocus()
                 return false
             }
             override fun onLongPress(e: MotionEvent) {
-                recyclerView.findChildViewUnder(e.x, e.y)?.requestFocus()
+                binding.newsRecycler.findChildViewUnder(e.x, e.y)?.requestFocus()
             }
         })
 
-        recyclerView.addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
+        binding.newsRecycler.addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
             override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
                 detector.onTouchEvent(e)
                 return false
@@ -93,7 +104,12 @@ class NewsFeedFragment : Fragment(), NewsCallback {
         Log.e("NEWS_ERROR", error)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     fun scrollToTop() {
-        recyclerView.smoothScrollToPosition(0)
+        binding.newsRecycler.smoothScrollToPosition(0)
     }
 }

@@ -31,6 +31,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+    buildFeatures {
+        viewBinding=true
+    }
 }
 
 dependencies {
@@ -58,4 +62,9 @@ dependencies {
 
     // Recommended: Add the Network (OkHttp) fetcher for API images
     implementation(libs.coil.network.okhttp)
+
+    // ViewModel
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    // LiveData
+    implementation(libs.androidx.lifecycle.livedata.ktx)
 }

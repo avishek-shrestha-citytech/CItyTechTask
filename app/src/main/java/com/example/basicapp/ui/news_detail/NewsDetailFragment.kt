@@ -9,12 +9,20 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManagerNonConfig
 import coil3.load
 import coil3.request.crossfade
 import com.example.basicapp.R
+import com.example.basicapp.databinding.FragmentNewsDetailBinding
+import com.example.basicapp.databinding.FragmentNewsFeedBinding
 import com.google.android.material.button.MaterialButton
+import androidx.core.net.toUri
 
 class NewsDetailFragment : Fragment() {
+
+    //View Binding Initialization
+    private var _binding: FragmentNewsDetailBinding?=null
+    private val binding get() = _binding!!
 
     companion object {
         private const val ARG_TITLE = "title"
@@ -49,8 +57,9 @@ class NewsDetailFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_news_detail, container, false)
+    ): View {
+        _binding = FragmentNewsDetailBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,38 +72,35 @@ class NewsDetailFragment : Fragment() {
         val source = arguments?.getString(ARG_SOURCE) ?: ""
         val date = arguments?.getString(ARG_DATE) ?: ""
 
-        val detailImage: ImageView = view.findViewById(R.id.detailImage)
-        val detailTitle: TextView = view.findViewById(R.id.detailTitle)
-        val detailSource: TextView = view.findViewById(R.id.detailSource)
-        val detailDate: TextView = view.findViewById(R.id.detailDate)
-        val detailDescription: TextView = view.findViewById(R.id.detailDescription)
-        val readMoreButton: MaterialButton = view.findViewById(R.id.readMoreButton)
-
-        detailTitle.text = title
-        detailSource.text = source
-        detailDate.text = formatDate(date)
-        detailDescription.text = description
+        binding.detailTitle.text = title
+        binding.detailSource.text = source
+        binding.detailDate.text = formatDate(date)
+        binding.detailDescription.text = description
 
         if (!image.isNullOrEmpty()) {
-            detailImage.load(image) {
+            binding.detailImage.load(image) {
                 crossfade(true)
             }
         } else {
-            detailImage.visibility = View.GONE
+            binding.detailImage.visibility = View.GONE
         }
 
-        readMoreButton.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        binding.readMoreButton.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, url.toUri())
             startActivity(intent)
         }
     }
 
     private fun formatDate(dateString: String): String {
         return try {
-            // Simple formatting - just show the date part
             dateString.substringBefore("T")
         } catch (e: Exception) {
             dateString
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

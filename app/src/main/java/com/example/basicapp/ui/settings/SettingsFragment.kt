@@ -8,27 +8,29 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.basicapp.R
+import com.example.basicapp.databinding.FragmentSettingsBinding
 import com.example.basicapp.model.SettingItem
 
 class SettingsFragment : Fragment() {
 
-    private lateinit var settingsRecyclerView: RecyclerView
+    private var _binding: FragmentSettingsBinding?=null
+    private val binding get() = _binding!!
+
     private lateinit var settingsAdapter: SettingsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_settings, container, false)
+    ): View {
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
-        settingsRecyclerView = view.findViewById(R.id.settingsRecyclerView)
+
         setupRecyclerView()
     }
 
@@ -43,7 +45,7 @@ class SettingsFragment : Fragment() {
             handleSettingClick(item)
         }
 
-        settingsRecyclerView.apply {
+        binding.settingsRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = settingsAdapter
             addItemDecoration(
@@ -64,5 +66,10 @@ class SettingsFragment : Fragment() {
                 Toast.makeText(requireContext(), "Logout clicked", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

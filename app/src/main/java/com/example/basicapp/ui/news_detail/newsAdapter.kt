@@ -2,15 +2,13 @@ package com.example.basicapp.ui.news_detail
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
 import coil3.request.crossfade
 import coil3.request.placeholder
 import com.example.basicapp.R
+import com.example.basicapp.databinding.NewsformatBinding
 import com.example.basicapp.model.Article
 
 class NewsAdapter(
@@ -18,27 +16,26 @@ class NewsAdapter(
     private val onArticleClick: ((Article) -> Unit)? = null
 ) : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
 
-    class NewsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val title: TextView = view.findViewById(R.id.mainText)
-        val description: TextView = view.findViewById(R.id.secText)
-        val image: ImageView = view.findViewById(R.id.newsImage)
-    }
+    class NewsViewHolder(val binding: NewsformatBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.newsformat, parent, false)
-        return NewsViewHolder(view)
+        val binding = NewsformatBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return NewsViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
         val article = articles[position]
 
         // Text
-        holder.title.text = article.title
-        holder.description.text = article.description
+        holder.binding.mainText.text = article.title
+        holder.binding.secText.text = article.description
 
-        // Coil
-        holder.image.load(article.image) {
+        // Image with Coil
+        holder.binding.newsImage.load(article.image) {
             crossfade(true)
             placeholder(R.drawable.ic_launcher_background)
         }
@@ -51,10 +48,10 @@ class NewsAdapter(
 
     override fun getItemCount(): Int = articles.size
 
-    // Helper fn
+    // Helper function to update list
     @SuppressLint("NotifyDataSetChanged")
     fun updateData(newArticles: List<Article>) {
         this.articles = newArticles
-        notifyDataSetChanged() //Refresh List
+        notifyDataSetChanged() // Refresh RecyclerView
     }
 }
