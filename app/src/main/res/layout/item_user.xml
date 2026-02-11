@@ -23,14 +23,26 @@
             android:padding="16dp"
             android:gravity="center_vertical">
 
-            <!-- User avatar image -->
-            <ImageView
-                android:id="@+id/userAvatar"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:src="@drawable/ic_launcher_background"
-                android:scaleType="centerCrop"
-                android:contentDescription="User avatar" />
+            <!-- User avatar image container -->
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ProgressBar
+                    android:id="@+id/avatarProgress"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:indeterminateTint="?attr/colorPrimary" />
+
+                <ImageView
+                    android:id="@+id/userAvatar"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:src="@drawable/ic_launcher_background"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="User avatar" />
+            </FrameLayout>
 
             <!-- Username and type (vertical layout) -->
             <LinearLayout

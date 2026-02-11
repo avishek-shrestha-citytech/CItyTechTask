@@ -40,6 +40,11 @@ class UserListFragment : Fragment(), OnUserClickListener {
         viewModel.users.observe(viewLifecycleOwner) { users ->
             adapter.updateData(users)
         }
+
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            binding.userRecycler.visibility = if (isLoading) View.GONE else View.VISIBLE
+        }
     }
 
     override fun onUserClick(user: GithubUser) {

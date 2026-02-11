@@ -54,7 +54,13 @@ class UserAdapter(private val listener: OnUserClickListener) :
             binding.userProfileUrl.text = user.html_url
             binding.userAvatarUrl.text = user.avatar_url
 
-            binding.userAvatar.load(user.avatar_url)
+            binding.avatarProgress.visibility = View.VISIBLE
+            binding.userAvatar.load(user.avatar_url) {
+                listener(
+                    onSuccess = { _, _ -> binding.avatarProgress.visibility = View.GONE },
+                    onError = { _, _ -> binding.avatarProgress.visibility = View.GONE }
+                )
+            }
 
             val isExpanded = expandedItems.contains(user.id)
             binding.expandableSection.visibility = if (isExpanded) View.VISIBLE else View.GONE

@@ -11,6 +11,9 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: UserRepository
     val users: LiveData<List<GithubUser>>
 
+    private val _isLoading = androidx.lifecycle.MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> get() = _isLoading
+
     init {
         val database = UserDatabase.getInstance(application)
         val userDao = database.userDao()
@@ -20,6 +23,8 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun refreshUsers() {
-        repository.refreshUsers()
+        repository.refreshUsers { loading ->
+            _isLoading.postValue(loading)
+        }
     }
 }

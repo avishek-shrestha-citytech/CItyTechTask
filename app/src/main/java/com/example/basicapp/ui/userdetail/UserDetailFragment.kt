@@ -56,7 +56,13 @@ class UserDetailFragment : Fragment() {
         binding.detailLogin.text = login
         binding.detailType.text = type
 
-        binding.detailAvatar.load(avatarUrl)
+        binding.detailAvatarProgress.visibility = View.VISIBLE
+        binding.detailAvatar.load(avatarUrl) {
+            listener(
+                onSuccess = { _, _ -> binding.detailAvatarProgress.visibility = View.GONE },
+                onError = { _, _ -> binding.detailAvatarProgress.visibility = View.GONE }
+            )
+        }
 
         // Open github proflle button
         binding.openProfileButton.setOnClickListener {

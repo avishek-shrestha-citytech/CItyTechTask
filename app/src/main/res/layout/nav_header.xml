@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
-        android:text="Basic App"
+        android:text="Github Users"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         tools:ignore="HardcodedText" />
 

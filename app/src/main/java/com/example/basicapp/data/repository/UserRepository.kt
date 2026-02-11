@@ -13,7 +13,8 @@ class UserRepository(private val userDao: UserDao) {
 
     val users: LiveData<List<GithubUser>> = userDao.getAllUsers()
 
-    fun refreshUsers() {
+    fun refreshUsers(onLoading: (Boolean) -> Unit) {
+        onLoading(true)
         RetrofitClient.service.getUsers().enqueue(object : Callback<List<GithubUser>> {
 
             override fun onResponse(
@@ -27,15 +28,19 @@ class UserRepository(private val userDao: UserDao) {
                         Thread {
                             userDao.deleteAll()
                             userDao.insertAll(userList)
+                            // We can consider loading done when data is inserted, 
+                            // or immediately after response if we rely on LiveData updates
                         }.start()
                     }
                 } else {
                     Log.e("UserRepository", "API Error: ${response.code()}")
                 }
+                onLoading(false)
             }
 
             override fun onFailure(call: Call<List<GithubUser>>, t: Throwable) {
                 Log.e("UserRepository", "Network Error: ${t.message}")
+                onLoading(false)
             }
         })
     }

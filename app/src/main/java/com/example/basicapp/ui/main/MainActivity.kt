@@ -1,14 +1,20 @@
 package com.example.basicapp.ui.main
 
 import android.os.Bundle
+import android.view.View
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.core.view.OnApplyWindowInsetsListener
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.example.basicapp.R
 import com.example.basicapp.databinding.ActivityMainBinding
 import com.example.basicapp.ui.settings.SettingsFragment
 import com.example.basicapp.ui.userlist.UserListFragment
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -21,9 +27,16 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+        enableEdgeToEdge()
+
         //Viewbinding lai initialize garreko
         binding = ActivityMainBinding.inflate(layoutInflater)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.constraintLayout) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
 
         //Hamro root meaning layout tree ko top (constrained layout) lai display garne
         setContentView(binding.root)
