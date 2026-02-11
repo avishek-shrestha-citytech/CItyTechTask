@@ -7,11 +7,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.basicapp.R
-import com.example.basicapp.model.SettingItem
 
 class SettingsAdapter(
-    private val items: List<SettingItem>,
-    private val onItemClick: (SettingItem) -> Unit
+    private val items: List<Triple<String, Int, Int>>,
+    private val onItemClick: (Int) -> Unit
 ) : RecyclerView.Adapter<SettingsAdapter.SettingViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SettingViewHolder {
@@ -21,7 +20,8 @@ class SettingsAdapter(
     }
 
     override fun onBindViewHolder(holder: SettingViewHolder, position: Int) {
-        holder.bind(items[position])
+        val (title, icon, id) = items[position]
+        holder.bind(title, icon, id)
     }
 
     override fun getItemCount(): Int = items.size
@@ -30,10 +30,11 @@ class SettingsAdapter(
         private val iconView: ImageView = itemView.findViewById(R.id.settingIcon)
         private val titleView: TextView = itemView.findViewById(R.id.settingTitle)
 
-        fun bind(item: SettingItem) {
-            iconView.setImageResource(item.iconResId)
-            titleView.text = item.title
-            itemView.setOnClickListener { onItemClick(item) }
+        fun bind(title: String, icon: Int, id: Int) {
+            iconView.setImageResource(icon)
+            titleView.text = title
+
+            itemView.setOnClickListener { onItemClick(id) }
         }
     }
 }

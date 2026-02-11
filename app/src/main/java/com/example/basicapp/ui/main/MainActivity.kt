@@ -1,188 +1,193 @@
 package com.example.basicapp.ui.main
 
 import android.os.Bundle
-import android.view.View
-import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import com.example.basicapp.R
 import com.example.basicapp.databinding.ActivityMainBinding
 import com.example.basicapp.ui.settings.SettingsFragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.navigation.NavigationView
+import com.example.basicapp.ui.userlist.UserListFragment
 
 class MainActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var drawerLayout: DrawerLayout
-    private lateinit var toggle: ActionBarDrawerToggle
-    private lateinit var bottomNav: BottomNavigationView
-    private lateinit var navView: NavigationView
-    private lateinit var titleTextView: TextView
-    private lateinit var toolbar: Toolbar
+    private var userListFragment: UserListFragment? = null
+    private var settingsFragment: SettingsFragment? = null
 
-    private var currentFragmentTag: String = TAG_NEWS_FEED
-
-    companion object {
-        private const val TAG_NEWS_FEED = "news_feed"
-        private const val TAG_SETTINGS = "settings"
-    }
+    //Yo aaile kun fragment xa bhanera track garnalai
+    private var currentFragment: Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-
+        
+        //Viewbinding lai initialize garreko
         binding = ActivityMainBinding.inflate(layoutInflater)
+
+        //Hamro root meaning layout tree ko top (constrained layout) lai display garne
         setContentView(binding.root)
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.constraintLayout) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-
-        // Initialize views
-        drawerLayout = binding.main
-        navView = binding.navView
-        bottomNav = binding.bottomNavigation
-        titleTextView = binding.textView
-        toolbar = binding.toolbar
-
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
+        
+        // Toolbar ko default text lai hide gareko
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        toggle = ActionBarDrawerToggle(
-            this, drawerLayout, toolbar,
-            R.string.navigation_drawer_open, R.string.navigation_drawer_close
-        )
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
-
+        //Fragment lai initialize
         if (savedInstanceState == null) {
-            loadFragment(NewsFeedFragment(), TAG_NEWS_FEED)
-            bottomNav.selectedItemId = R.id.newsFeed
-            navView.setCheckedItem(R.id.newsFeed)
-        }
-
-        navView.setNavigationItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.newsFeed -> navigateTo(TAG_NEWS_FEED)
-                R.id.settings -> navigateTo(TAG_SETTINGS)
-            }
-            drawerLayout.closeDrawer(GravityCompat.START)
-            true
-        }
-
-        bottomNav.setOnItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.newsFeed -> {
-                    navigateTo(TAG_NEWS_FEED)
-                    true
-                }
-                R.id.settings -> {
-                    navigateTo(TAG_SETTINGS)
-                    true
-                }
-                else -> false
-            }
-        }
-
-        supportFragmentManager.addOnBackStackChangedListener {
-            updateNavigationVisibility()
-        }
-
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                when {
-                    drawerLayout.isDrawerOpen(GravityCompat.START) -> {
-                        drawerLayout.closeDrawer(GravityCompat.START)
-                    }
-                    supportFragmentManager.backStackEntryCount > 0 -> {
-                        supportFragmentManager.popBackStack()
-                    }
-                    currentFragmentTag != TAG_NEWS_FEED -> {
-                        navigateTo(TAG_NEWS_FEED)
-                        bottomNav.selectedItemId = R.id.newsFeed
-                    }
-                    else -> {
-                        isEnabled = false
-                        onBackPressedDispatcher.onBackPressed()
-                    }
-                }
-            }
-        })
-    }
-
-    private fun updateNavigationVisibility() {
-        val hasBackStack = supportFragmentManager.backStackEntryCount > 0
-
-        if (hasBackStack) {
-            bottomNav.visibility = View.GONE
-            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-            toggle.isDrawerIndicatorEnabled = false
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            toolbar.setNavigationOnClickListener {
-                supportFragmentManager.popBackStack()
-            }
-            titleTextView.text = "News Detail"
+            userListFragment = UserListFragment()
+            showFragment(userListFragment!!, "Users", "UserList")
         } else {
-            bottomNav.visibility = View.VISIBLE
-            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-            toggle.isDrawerIndicatorEnabled = true
-            supportActionBar?.setDisplayHomeAsUpEnabled(false)
-            toggle.syncState()
-            toolbar.setNavigationOnClickListener {
-                drawerLayout.openDrawer(GravityCompat.START)
+            //Tag le kun fragment chaliraxa ani replace garne bhanera track garne
+            userListFragment = supportFragmentManager.findFragmentByTag("UserList") as? UserListFragment
+            settingsFragment = supportFragmentManager.findFragmentByTag("Settings") as? SettingsFragment
+            currentFragment = userListFragment ?: settingsFragment
+        }
+
+        // Bottom Nav ko code
+        // setOnItemSelectedListener le bottom nav ma thicheko track garxa
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            // "When" bhaneko switch statement jastai
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    if (currentFragment is UserListFragment) {
+                        (currentFragment as UserListFragment).scrollToTop()
+                    } else {
+                        // Find existing fragment or create new one
+                        val fragment = supportFragmentManager.findFragmentByTag("UserList") as? UserListFragment
+                            ?: UserListFragment().also { userListFragment = it }
+                        showFragment(fragment, "Users", "UserList")
+                    }
+                    
+                    // Sync with drawer navigation
+                    binding.navView.setCheckedItem(R.id.nav_home)
+                    
+                    true  // Return true to indicate we handled the click
+                }
+                R.id.nav_settings -> {
+                    val fragment = supportFragmentManager.findFragmentByTag("Settings") as? SettingsFragment
+                        ?: SettingsFragment().also { settingsFragment = it }
+                    showFragment(fragment, "Settings", "Settings")
+
+                    // Sync with drawer navigation
+                    binding.navView.setCheckedItem(R.id.nav_settings)
+                    
+                    true
+                }
+                else -> false  // Unknown item, don't handle it
             }
-            // Restore title based on current fragment
-            titleTextView.text = if (currentFragmentTag == TAG_NEWS_FEED) "News Feed" else "Settings"
+        }
+
+        //sidwbar
+        val toggle = ActionBarDrawerToggle(
+            this,
+            binding.main,
+            binding.toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
+        binding.main.addDrawerListener(toggle)
+        toggle.syncState() //screen rotation bhayo bhane toggle lai sync garne
+
+        //sidebar
+        binding.navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_home -> {
+                    if (currentFragment is UserListFragment) {
+                        (currentFragment as UserListFragment).scrollToTop()
+                    } else {
+                        val fragment = supportFragmentManager.findFragmentByTag("UserList") as? UserListFragment
+                            ?: UserListFragment().also { userListFragment = it }
+                        showFragment(fragment, "Users", "UserList")
+                    }
+                    binding.bottomNavigation.selectedItemId = R.id.nav_home
+                    binding.main.closeDrawer(GravityCompat.START)
+                    true
+                }
+                R.id.nav_settings -> {
+                    val fragment = supportFragmentManager.findFragmentByTag("Settings") as? SettingsFragment
+                        ?: SettingsFragment().also { settingsFragment = it }
+                    showFragment(fragment, "Settings", "Settings")
+                    binding.bottomNavigation.selectedItemId = R.id.nav_settings
+                    binding.main.closeDrawer(GravityCompat.START)
+                    true
+                }
+                else -> {
+                    binding.main.closeDrawer(GravityCompat.START)
+                    false
+                }
+            }
         }
     }
 
-
-    private fun loadFragment(fragment: Fragment, tag: String) {
-        val currentFragment = supportFragmentManager.findFragmentByTag(currentFragmentTag)
-
-        supportFragmentManager.beginTransaction().apply {
-            if (currentFragment != null) {
-                hide(currentFragment)
-            }
-
-            val existingFragment = supportFragmentManager.findFragmentByTag(tag)
-            if (existingFragment != null) {
-                show(existingFragment)
-            } else {
-                add(R.id.fragment_container, fragment, tag)
-            }.commit()
+    private fun showFragment(fragment: Fragment, title: String, tag: String) {
+        // Update toolbar title
+        supportActionBar?.title = title
+        
+        // Start a fragment transaction
+        val transaction = supportFragmentManager.beginTransaction()
+        
+        // Hide the currently visible fragment (if any)
+        currentFragment?.let {
+            transaction.hide(it)
         }
-    }
-
-    private fun navigateTo(tag: String) {
-        if (currentFragmentTag == tag) {
-            if (tag == TAG_NEWS_FEED) {
-                (supportFragmentManager.findFragmentByTag(tag) as? NewsFeedFragment)?.scrollToTop()
-            }
+        
+        // Check if this fragment is already added using the FragmentManager
+        val existingFragment = supportFragmentManager.findFragmentByTag(tag)
+        
+        if (existingFragment == null) {
+            // Fragment doesn't exist yet, add it
+            transaction.add(R.id.fragment_container, fragment, tag)
+        } else {
+            // Fragment exists, just show it
+            transaction.show(existingFragment)
+            // Update currentFragment to the existing one, not the passed parameter
+            currentFragment = existingFragment
+            transaction.commit()
             return
         }
+        
+        // Commit the transaction
+        transaction.commit()
+        
+        // Update current fragment reference
+        currentFragment = fragment
+    }
 
-        val fragment = when (tag) {
-            TAG_NEWS_FEED -> NewsFeedFragment()
-            TAG_SETTINGS -> SettingsFragment()
-            else -> return
+    //nav bar ani side bar hide/show
+    fun showNavigation() {
+        binding.bottomNavigation.visibility = android.view.View.VISIBLE
+        binding.main.setDrawerLockMode(androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED)
+
+        // pheri menu enable
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        val toggle = ActionBarDrawerToggle(
+            this,
+            binding.main,
+            binding.toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
+        binding.main.addDrawerListener(toggle)
+        toggle.syncState()
+    }
+
+    fun hideNavigation() {
+        binding.bottomNavigation.visibility = android.view.View.GONE
+        binding.main.setDrawerLockMode(androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+
+        // Menu ko satta back button enable garne
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.toolbar.setNavigationOnClickListener {
+            supportFragmentManager.popBackStack()
         }
+    }
 
-        loadFragment(fragment, tag)
-        currentFragmentTag = tag
-        titleTextView.text = if (tag == TAG_NEWS_FEED) "News Feed" else "Settings"
+   //Back button tool bar ko
+    override fun onSupportNavigateUp(): Boolean {
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStack()
+            return true
+        }
+        return super.onSupportNavigateUp()
     }
 }

@@ -4,12 +4,12 @@
     tools:ignore="HardcodedText">
 
     <item
-        android:id="@+id/newsFeed"
-        android:title="News Feed"
+        android:id="@+id/nav_home"
+        android:title="Users"
         android:icon="@drawable/newsicon" />
 
     <item
-        android:id="@+id/settings"
+        android:id="@+id/nav_settings"
         android:title="Settings"
         android:icon="@drawable/settingsicon" />
 

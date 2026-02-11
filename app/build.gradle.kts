@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -67,4 +68,11 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     // LiveData
     implementation(libs.androidx.lifecycle.livedata.ktx)
+
+    //Room DB
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+
+    // Annotation processor (Compiler)
+    ksp(libs.androidx.room.compiler)
 }

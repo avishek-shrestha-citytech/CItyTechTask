@@ -2,29 +2,33 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="160dp"
-    android:background="#2E7D32"
+    android:layout_height="200dp"
+    android:background="?attr/colorPrimary"
     android:gravity="bottom"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:ignore="HardcodedText">
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
-        android:id="@+id/nav_header_icon"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:src="@drawable/newsicon2"
+        android:src="@drawable/ic_launcher_foreground"
         android:contentDescription="App Icon"
-        android:paddingStart="10.sp"
-        tools:ignore="RtlSymmetry" />
+        tools:ignore="HardcodedText" />
 
     <TextView
-        android:id="@+id/nav_header_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="News App"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:paddingTop="8dp"
+        android:text="Basic App"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="sample@email.com"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        tools:ignore="HardcodedText" />
+
 </LinearLayout>
