@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,6 +39,31 @@ class UserListFragment : Fragment(), OnUserClickListener {
 
         viewModel = ViewModelProvider(this)[UserViewModel::class.java]
 
+        // Setup spinner for sorting
+        val sortOptions = listOf("Sort by Name", "Sort by ID")
+        val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, sortOptions).apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
+        binding.spinnerSortFragment.adapter = spinnerAdapter
+
+        var isSpinnerInitialized = false
+        binding.spinnerSortFragment.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                // Only process spinner changes after initialization is complete
+                if (isSpinnerInitialized) {
+                    val option = sortOptions[position]
+                    viewModel.setSortOption(option)
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) = Unit
+        }
+
         viewModel.users.observe(viewLifecycleOwner) { users ->
             adapter.updateData(users)
         }
@@ -45,6 +72,9 @@ class UserListFragment : Fragment(), OnUserClickListener {
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
             binding.userRecycler.visibility = if (isLoading) View.GONE else View.VISIBLE
         }
+
+        // Mark spinner as initialized after observers are set up
+        isSpinnerInitialized = true
     }
 
     override fun onUserClick(user: GithubUser) {

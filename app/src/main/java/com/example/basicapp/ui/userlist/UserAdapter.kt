@@ -1,4 +1,3 @@
-
 package com.example.basicapp.ui.userlist
 
 import android.view.LayoutInflater
@@ -9,6 +8,7 @@ import coil3.load
 import com.example.basicapp.R
 import com.example.basicapp.data.model.GithubUser
 import com.example.basicapp.databinding.ItemUserBinding
+import kotlin.properties.Delegates
 
 interface OnUserClickListener {
     fun onUserClick(user: GithubUser)
@@ -17,7 +17,6 @@ interface OnUserClickListener {
 
 class UserAdapter(private val listener: OnUserClickListener) :
     RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
-
     private var userList = listOf<GithubUser>()
 
     private val expandedItems = mutableSetOf<Int>()

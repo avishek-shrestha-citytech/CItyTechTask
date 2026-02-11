@@ -1,12 +1,10 @@
 package com.example.basicapp.ui.main
 
 import android.os.Bundle
-import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -32,14 +30,14 @@ class MainActivity : AppCompatActivity() {
         //Viewbinding lai initialize garreko
         binding = ActivityMainBinding.inflate(layoutInflater)
 
+        // Hamro root meaning layout tree ko top (constrained layout) lai display garne
+        setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(binding.constraintLayout) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        //Hamro root meaning layout tree ko top (constrained layout) lai display garne
-        setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         
         // Toolbar ko default text lai hide gareko
@@ -70,7 +68,6 @@ class MainActivity : AppCompatActivity() {
                             ?: UserListFragment().also { userListFragment = it }
                         showFragment(fragment, "Users", "UserList")
                     }
-                    
                     // Sync with drawer navigation
                     binding.navView.setCheckedItem(R.id.nav_home)
                     
