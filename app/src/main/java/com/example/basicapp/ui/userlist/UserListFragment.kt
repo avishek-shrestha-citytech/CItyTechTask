@@ -1,5 +1,6 @@
 package com.example.basicapp.ui.userlist
 
+import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -39,12 +40,19 @@ class UserListFragment : Fragment(), OnUserClickListener {
 
         viewModel = ViewModelProvider(this)[UserViewModel::class.java]
 
-        // Setup spinner for sorting
+        // sorting
         val sortOptions = listOf("Sort by Name", "Sort by ID")
         val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, sortOptions).apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
         binding.spinnerSortFragment.adapter = spinnerAdapter
+
+        // Load saved preference and set spinner position
+        val savedOption = viewModel.getSavedSortOption()
+        val savedPosition = sortOptions.indexOf(savedOption)
+        if (savedPosition != -1) {
+            binding.spinnerSortFragment.setSelection(savedPosition, false)
+        }
 
         var isSpinnerInitialized = false
         binding.spinnerSortFragment.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {

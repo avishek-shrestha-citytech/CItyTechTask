@@ -5,11 +5,16 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.MediatorLiveData
+import com.example.basicapp.data.local.PreferenceManager
 import com.example.basicapp.data.local.UserDatabase
 import com.example.basicapp.data.model.GithubUser
 import com.example.basicapp.data.repository.UserRepository
 
 class UserViewModel(application: Application) : AndroidViewModel(application) {
+
+    //Shared Preferences
+    private val preferenceManager = PreferenceManager(application)
+
 
     private val _users = MediatorLiveData<List<GithubUser>>()
     val users: LiveData<List<GithubUser>> get() = _users
@@ -22,6 +27,14 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     fun setSortOption(option: String) {
         _sortOption.value = option
         _users.value = sortUsers(rawUsers, option)
+
+        //save in the shared preferences
+        preferenceManager.saveSortOption(option)
+    }
+
+    //get saved setting from the preference manager
+    fun getSavedSortOption(): String {
+        return preferenceManager.getSortOption()
     }
 
     private fun sortUsers(list: List<GithubUser>, option: String?): List<GithubUser> {
@@ -41,7 +54,9 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         val userDao = database.userDao()
         repository = UserRepository(userDao)
 
-        _sortOption.value = "Sort by ID"
+        // get the sort option from the shared preferences
+        _sortOption.value = preferenceManager.getSortOption()
+
         _users.addSource(repository.users) { list ->
             rawUsers = list
             // Always apply current sort option to the new data
