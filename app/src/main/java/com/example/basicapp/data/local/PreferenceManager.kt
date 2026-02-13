@@ -24,10 +24,4 @@ class PreferenceManager(context: Context) {
     fun getSortOption(): String {
         return prefs.getString(KEY_SORT_OPTION, DEFAULT_SORT) ?: DEFAULT_SORT
     }
-
-    fun clearAll() {
-        prefs.edit {
-            clear()
-        }
-    }
 }

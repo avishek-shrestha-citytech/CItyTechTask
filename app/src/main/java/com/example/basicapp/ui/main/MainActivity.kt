@@ -196,6 +196,7 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStack()
+            showNavigation()
             return true
         }
         return super.onSupportNavigateUp()

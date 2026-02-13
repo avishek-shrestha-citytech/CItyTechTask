@@ -1,37 +1,49 @@
 package com.example.basicapp.ui.userdetail
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import coil3.load
 import com.example.basicapp.databinding.FragmentUserDetailBinding
 import com.example.basicapp.ui.main.MainActivity
 import androidx.core.net.toUri
+import androidx.core.view.isVisible
+import com.example.basicapp.data.model.GithubUser
 
 class UserDetailFragment : Fragment() {
     private var _binding: FragmentUserDetailBinding? = null
     private val binding get() = _binding!!
 
-    companion object {
-        private const val ARG_LOGIN = "login"
-        private const val ARG_AVATAR = "avatar_url"
-        private const val ARG_HTML = "html_url"
-        private const val ARG_TYPE = "type"
+    private var user: GithubUser? = null
 
-        fun newInstance(login: String, avatarUrl: String, htmlUrl: String, type: String): UserDetailFragment {
+    companion object {
+        private const val ARG_USER = "user"
+
+        fun newInstance(user: GithubUser): UserDetailFragment {
             val fragment = UserDetailFragment()
-            val args = Bundle()  // Bundle stores key-value pairs
-            args.putString(ARG_LOGIN, login)
-            args.putString(ARG_AVATAR, avatarUrl)
-            args.putString(ARG_HTML, htmlUrl)
-            args.putString(ARG_TYPE, type)
-            fragment.arguments = args  // Attach the bundle to the fragment
+            val bundle = Bundle()
+            bundle.putParcelable(ARG_USER, user)
+            fragment.arguments = bundle
             return fragment
         }
     }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        user = arguments?.getParcelable("user", GithubUser::class.java)
+    }
+
+    //Depreciated in the API 33
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        user = arguments?.getParcelable("user")
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,30 +57,28 @@ class UserDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //hide nav and sidebar
+        // Hide nav and sidebar
         (activity as? MainActivity)?.hideNavigation()
 
-        val login = arguments?.getString(ARG_LOGIN) ?: ""
-        val avatarUrl = arguments?.getString(ARG_AVATAR) ?: ""
-        val htmlUrl = arguments?.getString(ARG_HTML) ?: ""
-        val type = arguments?.getString(ARG_TYPE) ?: ""
+        // Make sure user is not null
+        user?.let { githubUser ->
+            binding.detailLogin.text = githubUser.login
+            binding.detailType.text = githubUser.type
 
-        binding.detailLogin.text = login
-        binding.detailType.text = type
+            binding.detailAvatarProgress.visibility = View.VISIBLE
+            binding.detailAvatar.load(githubUser.avatarurl) {
+                listener(
+                    onSuccess = { _, _ -> binding.detailAvatarProgress.isVisible = false },
+                    onError = { _, _ -> binding.detailAvatarProgress.isVisible = false }
+                )
+            }
 
-        binding.detailAvatarProgress.visibility = View.VISIBLE
-        binding.detailAvatar.load(avatarUrl) {
-            listener(
-                onSuccess = { _, _ -> binding.detailAvatarProgress.visibility = View.GONE },
-                onError = { _, _ -> binding.detailAvatarProgress.visibility = View.GONE }
-            )
-        }
-
-        // Open github proflle button
-        binding.openProfileButton.setOnClickListener {
-            if (htmlUrl.isNotEmpty()) {
-                val intent = Intent(Intent.ACTION_VIEW, htmlUrl.toUri())
-                startActivity(intent)  // Launch the browser
+            // Open github profile button
+            binding.openProfileButton.setOnClickListener {
+                if (githubUser.htmlurl.isNotEmpty()) {
+                    val intent = Intent(Intent.ACTION_VIEW, githubUser.htmlurl.toUri())
+                    startActivity(intent)  // Launch the browser
+                }
             }
         }
     }

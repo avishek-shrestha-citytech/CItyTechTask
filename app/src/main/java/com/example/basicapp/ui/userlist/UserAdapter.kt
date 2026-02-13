@@ -5,10 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
-import com.example.basicapp.R
 import com.example.basicapp.data.model.GithubUser
 import com.example.basicapp.databinding.ItemUserBinding
-import kotlin.properties.Delegates
 
 interface OnUserClickListener {
     fun onUserClick(user: GithubUser)
@@ -50,11 +48,11 @@ class UserAdapter(private val listener: OnUserClickListener) :
             binding.userType.text = user.type
 
             binding.userId.text = user.id.toString()
-            binding.userProfileUrl.text = user.html_url
-            binding.userAvatarUrl.text = user.avatar_url
+            binding.userProfileUrl.text = user.htmlurl
+            binding.userAvatarUrl.text = user.avatarurl
 
             binding.avatarProgress.visibility = View.VISIBLE
-            binding.userAvatar.load(user.avatar_url) {
+            binding.userAvatar.load(user.avatarurl) {
                 listener(
                     onSuccess = { _, _ -> binding.avatarProgress.visibility = View.GONE },
                     onError = { _, _ -> binding.avatarProgress.visibility = View.GONE }

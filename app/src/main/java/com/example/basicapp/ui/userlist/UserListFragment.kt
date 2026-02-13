@@ -1,6 +1,5 @@
 package com.example.basicapp.ui.userlist
 
-import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,8 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.basicapp.R
-import com.example.basicapp.databinding.FragmentUserListBinding
 import com.example.basicapp.data.model.GithubUser
+import com.example.basicapp.databinding.FragmentUserListBinding
 import com.example.basicapp.ui.userdetail.UserDetailFragment
 
 class UserListFragment : Fragment(), OnUserClickListener {
@@ -86,18 +85,14 @@ class UserListFragment : Fragment(), OnUserClickListener {
     }
 
     override fun onUserClick(user: GithubUser) {
-        val detailFragment = UserDetailFragment.newInstance(
-            login = user.login,
-            avatarUrl = user.avatar_url,
-            htmlUrl = user.html_url,
-            type = user.type
-        )
+        val detailFragment = UserDetailFragment.newInstance(user)
 
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, detailFragment)
             .addToBackStack(null)
             .commit()
     }
+
 
     fun scrollToTop() {
         binding.userRecycler.smoothScrollToPosition(0)
