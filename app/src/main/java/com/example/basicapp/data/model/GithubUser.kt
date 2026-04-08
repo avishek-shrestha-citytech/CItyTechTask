@@ -4,6 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "users")
 data class GithubUser(
@@ -12,7 +13,9 @@ data class GithubUser(
     val id: Int,
 
     val login: String,
+    @SerializedName("avatar_url")
     val avatarurl: String,
+    @SerializedName("html_url")
     val htmlurl: String,
     val type: String
 ): Parcelable {
